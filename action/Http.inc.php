@@ -37,6 +37,13 @@ class Http
         }
     }
 
+    private function patchRequest()
+    {
+        $_PATCH = Http::rawInput();
+
+        Http::jsonResponse($_PATCH['test']);
+    }
+
     private function postRequest()
     {
 
@@ -49,8 +56,8 @@ class Http
         exit;
     }
 
-    public static function rawPost()
+    public static function rawInput()
     {
-        return json_decode(file_get_contents('php://input'));
+        return json_decode(file_get_contents('php://input'), TRUE);
     }
 }
