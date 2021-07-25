@@ -113,14 +113,14 @@ function boxTemplateLayout(target, data) {
             <input type="checkbox" class="checkItem mx-2 my-3" data-path="{path}"/>
             <img class="card-img-top w-25 mt-4 mx-auto block" src="modules/filemanager/assets/{icon}" onclick="openFolder('{path}')">
             <div class="card-body text-center">
-                <span class="block card-title font-weight-bold text-dark text-center" onclick="openRename(this)">{name}</span>
-                <input type="text" value="{name}" onblur="renameName(this)" class="d-none"/>
+                <span class="block card-title font-weight-bold text-dark text-center filelabel" onclick="openRename(this, {num})">{name}</span>
+                <input type="text" value="{name}" label-for="{num}" orig-value="{name}" onkeypress="enterToRename(event, this, '{path}')" onblur="renameName(this, '{path}')" class="d-none"/>
             </div>
         </div>
     `
 
     let result = '';
-    data.forEach(item => {
+    data.forEach((item,idx) => {
         var path = template
         if (item.type !== 'directory')
         {
@@ -130,26 +130,62 @@ function boxTemplateLayout(target, data) {
         var path = path.replace(/{path}/gi, item.path)
         var icon = path.replace(/{icon}/gi, item.icon)
         var name = icon.replace(/{name}/gi, item.name)
-        result += name
+        var num = name.replace(/{num}/gi, idx)
+        result += num
     })
 
     target.innerHTML = result
 }
 
-function openRename(el)
+function openRename(el, idx)
 {
-    el.classList.add('d-none')
-    qs(`input[value="${el.innerHTML}"]`).classList.remove('d-none')
+    el.setAttribute('style', 'display: none !important')
+    qs(`input[label-for="${idx}"]`).classList.remove('d-none')
 }
 
-async function renameName(el)
+async function renameName(el, path)
 {
-    await fetch(`${baseurl}`, {
-        method: 'PATCH',
-        body: JSON.stringify({test:true})
-    })
-    .then(response => response.text())
-    .then(result => {
-        console.log(result)
-    })
+    let oldName = el.getAttribute('orig-value')
+    let newName = el.value
+    
+    if (newName !== oldName)
+    {
+        await fetch(`${baseurl}`, {
+            method: 'PATCH',
+            body: JSON.stringify({newFile: newName, oldFile: oldName, srcPath: path})
+        })
+        .then(response => response.json())
+        .then(result => {
+            // check status
+            if (result.status)
+            {
+                // set dom action
+                el.classList.add('d-none')
+                el.setAttribute('orig-value', el.value)
+                el.parentNode.children[0].innerHTML = el.value
+                el.parentNode.children[0].removeAttribute('style')
+                toastr.success(result.msg, 'Sukses')
+            }
+            else
+            {
+                toastr.error(result.msg, 'Galat')
+            }
+        })
+        .catch(error => {
+            toastr.error('Ada keasalahan pada server.', 'Galat')
+        })   
+    }
+    else
+    {
+        el.classList.add('d-none')
+        el.parentNode.children[0].removeAttribute('style')
+    }
+}
+
+function enterToRename(e, obj, path)
+{
+    if (e.key === 'Enter')
+    {
+        renameName(obj, path)
+    }
 }

@@ -14,7 +14,6 @@ use SLiMSFilemanager\Action\Http;
 
 class GetDir extends LoadContent
 {
-    
     public function runProcess()
     {
         parent::__construct(savePath(SB . $_GET['path']));
