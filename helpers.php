@@ -14,18 +14,29 @@
  * @param boolean $exit
  * @return void
  */
-function dd($mix, bool $exit = true)
+if (!function_exists('dd'))
 {
-    echo '<pre>';
-    var_dump($mix);
-    echo '</pre>';
+    function dd($mix, bool $exit = true)
+    {
+        echo '<pre>';
+        var_dump($mix);
+        echo '</pre>';
 
-    if ($exit) exit;
+        if ($exit) exit;
+    }
 }
 
 function handlerExists(string $handlerNamespace)
 {
     return class_exists($handlerNamespace);
+}
+
+function isParentSave($path)
+{
+    $saveParentPath = ['files','images','repository'];
+    $filterPath = explode(DS, str_replace(SB, '', $path));
+
+    return (in_array($filterPath[0], $saveParentPath));
 }
 
 function savePath($path)

@@ -16,7 +16,14 @@ class GetDir extends LoadContent
 {
     public function runProcess()
     {
-        parent::__construct(savePath(SB . $_GET['path']));
+        $path = SB . $_GET['path'];
+
+        // if (!isParentSave($path))
+        // {
+            Http::jsonResponse(isParentSave([]));
+        // }
+
+        parent::__construct(savePath($path));
 
         Http::jsonResponse($this->loadDir()->result());
     }   

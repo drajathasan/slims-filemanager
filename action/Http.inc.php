@@ -47,6 +47,16 @@ class Http
         }
     }
 
+    private function deleteRequest()
+    {
+        $_DELETE = Http::rawInput();
+
+        if (isset($_PATCH['srcPath']) && handlerExists($namespace = "SLiMSFilemanager\Handler\\Delete"))
+        {
+            (new $namespace($_PATCH['srcPath'], [$_PATCH['oldFile'], $_PATCH['newFile']]))->runProcess();
+        }
+    }
+
     private function postRequest()
     {
 
