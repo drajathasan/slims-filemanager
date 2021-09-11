@@ -50,3 +50,31 @@ function savePath($path)
 
     return DS . implode(DS, $filteringPath);
 }
+
+function createSysconf()
+{
+    global $sysconf,$dbs;
+
+    if (!isset($sysconf['filemanager']))
+    {
+        $Data = [
+            'canDownload' => true,
+            'trashDir' => __DIR__ . DS . 'trash'
+        ];
+
+        $dbs->query('insert into setting set setting_name = \'filemanager\', setting_value = \'' . serialize($Data) . '\'');
+    }
+
+    if ($dbs->query('show tables like \'filemanagerTrash\'')->num_rows === 0)
+    {
+        $dbs->query('CREATE TABLE `filemanagerTrash` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+            `originalpath` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+            `type` enum(\'Files\',\'Directory\') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+            `deletedat` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `name` (`name`) USING HASH
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;');
+    }
+}

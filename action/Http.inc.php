@@ -49,11 +49,13 @@ class Http
 
     private function deleteRequest()
     {
+        global $sysconf;
+
         $_DELETE = Http::rawInput();
 
-        if (isset($_PATCH['srcPath']) && handlerExists($namespace = "SLiMSFilemanager\Handler\\Delete"))
+        if (isset($_DELETE['path']) && handlerExists($namespace = "SLiMSFilemanager\Handler\\SoftDelete"))
         {
-            (new $namespace($_PATCH['srcPath'], [$_PATCH['oldFile'], $_PATCH['newFile']]))->runProcess();
+            (new $namespace($_DELETE['path'], $sysconf['filemanager']['trashDir']))->runProcess();
         }
     }
 

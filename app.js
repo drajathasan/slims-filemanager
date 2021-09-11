@@ -2,7 +2,7 @@
  * @author Drajat Hasan
  * @email drajathasan20@gmail.com
  * @create date 2021-07-18 00:52:35
- * @modify date 2021-07-18 00:52:35
+ * @modify date 2021-09-11 23:39:50
  * @desc [description]
  */
 
@@ -42,6 +42,7 @@ async function openFolder(pathFolder){
         await fetch(`${baseurl}?action=GetDir&path=${pathFolder}`)
         .then(response => response.json())
         .then(result => {
+            console.log(result)
             if (result.length > 0)
             {
                 qs('.pathName').innerHTML = 'Folder ' + pathFolder
@@ -51,7 +52,7 @@ async function openFolder(pathFolder){
             }
             else
             {
-                toastr.error('Error wa', 'Galat')
+                toastr.error('Folder ini kosong atau tidak valid', 'Galat')
             }
         })
     }
@@ -188,4 +189,62 @@ function enterToRename(e, obj, path)
     {
         renameName(obj, path)
     }
+}
+
+function checkAll()
+{
+    let ci = d.querySelectorAll('.checkItem')
+
+    ci.forEach(el => {
+        if (!el.checked)
+        {
+            el.checked = true
+        }
+    })
+}
+
+function unCheckAll()
+{
+    let ci = d.querySelectorAll('.checkItem')
+
+    ci.forEach(el => {
+        if (el.checked)
+        {
+            el.checked = false
+        }
+    })
+}
+
+async function deleteItem()
+{
+    let ci = d.querySelectorAll('.checkItem')
+    let data = []
+
+    ci.forEach(el => {
+        if (el.checked)
+        {
+            data.push(el.dataset.path)
+        }
+    })
+
+    await fetch(`${baseurl}`, {
+        method: 'DELETE',
+        body: JSON.stringify({path: data})
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status)
+        {
+            ci.forEach(el => {
+                if (el.checked)
+                {
+                    el.parentElement.classList.add('d-none')
+                }
+            })
+            toastr.success('Data berhasil dihapus', 'Sukses')
+        }
+    })
+    .catch(error => {
+        toastr.error('Ada keasalahan pada server.', 'Galat')
+    })   
 }

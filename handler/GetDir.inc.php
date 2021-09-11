@@ -18,13 +18,14 @@ class GetDir extends LoadContent
     {
         $path = SB . $_GET['path'];
 
-        // if (!isParentSave($path))
-        // {
-            Http::jsonResponse(isParentSave([]));
-        // }
-
-        parent::__construct(savePath($path));
-
-        Http::jsonResponse($this->loadDir()->result());
+        if (!isParentSave($path))
+        {
+            Http::jsonResponse([]);
+        }
+        else
+        {
+            parent::__construct(savePath($path));
+            Http::jsonResponse($this->loadDir()->result());
+        }
     }   
 }
