@@ -1,5 +1,5 @@
 <?php
 
 $menu = [
-    ['Halaman Utama', './modules/filemanager/index.php', 'Halamn Utama']
+    ['Daftar Direktori', './modules/filemanager/index.php', 'Daftar Direktori']
 ];
