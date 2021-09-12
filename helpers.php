@@ -73,8 +73,21 @@ function createSysconf()
             `originalpath` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
             `type` enum(\'Files\',\'Directory\') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
             `deletedat` datetime DEFAULT NULL ON UPDATE current_timestamp(),
-            PRIMARY KEY (`id`),
-            UNIQUE KEY `name` (`name`) USING HASH
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;');
+            `uid` tinyint(4) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci');
     }
+}
+
+function View($viewName)
+{
+    global $page_title,$sysconf;
+
+    $path = __DIR__ . DS . 'view' . DS . basename($viewName) . '.php';
+
+    if (!file_exists($path)) exit('View not found');
+
+    ob_start();
+    include $path;
+    return ob_get_clean();
 }

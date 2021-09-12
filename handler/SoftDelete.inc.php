@@ -56,8 +56,8 @@ class SoftDelete
         // Tool::writeLogs($dbs, 'filemanager', 'softDelete', 'filemanager', 'User ' . $_SESSION['uname'] . ' delete file/folder with path ' . $path);
         // Write Filemanager trash dir log
         DB::getInstance()
-            ->prepare('insert ignore into filemanagerTrash set name = ?, originalpath = ?, type = ?, deletedat = ?')
-            ->execute([$name, $path, $type, date('Y-m-d H:i:s')]);
+            ->prepare('insert ignore into filemanagerTrash set name = ?, originalpath = ?, type = ?, deletedat = ?, uid = ?')
+            ->execute([$name, $path, $type, date('Y-m-d H:i:s'), $_SESSION['uid']]);
     }
 
     public function runProcess()
